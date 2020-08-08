@@ -64,8 +64,8 @@ void medianFilter(ALLEGRO_BITMAP *image){
     unsigned char *** input_img = createMatriz(image);
     unsigned char *** output_img;
 
-	ptr_height = al_get_bitmap_height(image);
-    ptr_width  = al_get_bitmap_width(image);
+	*ptr_height = al_get_bitmap_height(image);
+    *ptr_width  = al_get_bitmap_width(image);
 
 
     int scaled_filter_size = WINDOW_FILTER_SIZE / 2;

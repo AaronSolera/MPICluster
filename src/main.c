@@ -22,7 +22,7 @@ ALLEGRO_BITMAP *image;
 
 int main(int argc, char *argv[])
 {
-	int rank, size, name_len, *ptr_width, *ptr_height, total_ranks = 2;
+	int rank, size, name_len, ptr_width, ptr_height, total_ranks = 2;
 	char processor_name[MPI_MAX_PROCESSOR_NAME];
 
     MPI_Init(&argc, &argv);
@@ -90,12 +90,14 @@ int main(int argc, char *argv[])
 	ptr_height = al_get_bitmap_height(image);
     ptr_width  = al_get_bitmap_width(image);
 
+	ALLEGRO_BITMAP *sub_bitmap;
+
 	if(rank == 0){
-        ALLEGRO_BITMAP *sub_bitmap = al_create_sub_bitmap(image, 0, 0, *ptr_width, *ptr_height/total_ranks + 1);
+        sub_bitmap = al_create_sub_bitmap(image, 0, 0, *ptr_width, *ptr_height/total_ranks + 1);
     }else if(rank == total_ranks){
-        ALLEGRO_BITMAP *sub_bitmap = al_create_sub_bitmap(image, 0, (*ptr_height/total_ranks) * rank - 1, *ptr_width, *ptr_height/total_ranks + 1);
+        sub_bitmap = al_create_sub_bitmap(image, 0, (*ptr_height/total_ranks) * rank - 1, *ptr_width, *ptr_height/total_ranks + 1);
     }else{
-        ALLEGRO_BITMAP *sub_bitmap = al_create_sub_bitmap(image, 0, (*ptr_height/total_ranks) * rank - 1, *ptr_width, *ptr_height/total_ranks + 2);
+        sub_bitmap = al_create_sub_bitmap(image, 0, (*ptr_height/total_ranks) * rank - 1, *ptr_width, *ptr_height/total_ranks + 2);
     }
 
 	medianFilter(sub_bitmap);
