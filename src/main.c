@@ -1,12 +1,10 @@
-/*
- *
- */
 #include <stdio.h>
 #include <unistd.h>
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_image.h>
 #include <stdbool.h>
 #include <allegro5/allegro_primitives.h>
+#include <mpi.h>
 #include "../include/windowLogic.h"
 
 #define WIDTH 1080
@@ -25,7 +23,6 @@ ALLEGRO_BITMAP * buffer = NULL;
 
 int main(int argc, char *argv[])
 {
-    //
 	int mouse_timer     = 0;
 
 	ALLEGRO_DISPLAY *display = NULL;
