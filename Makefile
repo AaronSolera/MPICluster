@@ -6,9 +6,9 @@ JSON_FLAGS = -ljson-c
 LIB = cd ./lib &&
 RM_O = cd ./lib && rm *.o
 
-.PHONY: main
+.PHONY: all
 
-#all: allegro json main
+all: allegro main
 #	$(RM_O)
 
 main:
@@ -17,6 +17,3 @@ main:
 
 allegro:
 	sudo apt-get install liballegro5-dev
-
-json:
-	sudo apt-get install libjson-c-dev
