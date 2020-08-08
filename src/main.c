@@ -22,7 +22,7 @@ ALLEGRO_BITMAP *image;
 
 int main(int argc, char *argv[])
 {
-	int rank, size, name_len, ptr_width, ptr_height, total_ranks = 2;
+	int rank, size, name_len, *ptr_width, *ptr_height, total_ranks = 2;
 	char processor_name[MPI_MAX_PROCESSOR_NAME];
 
     MPI_Init(&argc, &argv);
@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
 	al_init_primitives_addon();
 
 	//Read the bitmap from the image .png
-	imagen = al_load_bitmap(imgCastle);
+	image = al_load_bitmap(imgCastle);
 
 	// Initialize the timer
 	timer = al_create_timer(1.0 / FPS);
@@ -91,11 +91,11 @@ int main(int argc, char *argv[])
     ptr_width  = al_get_bitmap_width(image);
 
 	if(rank == 0){
-        BALLEGRO_BITMAP *sub_bitmap = create_sub_bitmap(image, 0, 0, ptr_width, ptr_height/total_ranks + 1);
+        ALLEGRO_BITMAP *sub_bitmap = al_create_sub_bitmap(image, 0, 0, *ptr_width, *ptr_height/total_ranks + 1);
     }else if(rank == total_ranks){
-        BALLEGRO_BITMAP *sub_bitmap = create_sub_bitmap(image, 0, (ptr_height/total_ranks) * rank - 1, ptr_width, ptr_height/total_ranks + 1);
+        ALLEGRO_BITMAP *sub_bitmap = al_create_sub_bitmap(image, 0, (*ptr_height/total_ranks) * rank - 1, *ptr_width, *ptr_height/total_ranks + 1);
     }else{
-        BALLEGRO_BITMAP *sub_bitmap = create_sub_bitmap(image, 0, (ptr_height/total_ranks) * rank - 1, ptr_width, ptr_height/total_ranks + 2);
+        ALLEGRO_BITMAP *sub_bitmap = al_create_sub_bitmap(image, 0, (*ptr_height/total_ranks) * rank - 1, *ptr_width, *ptr_height/total_ranks + 2);
     }
 
 	medianFilter(sub_bitmap);
