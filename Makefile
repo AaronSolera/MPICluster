@@ -7,12 +7,9 @@ RM_O = cd ./lib && rm *.o
 
 .PHONY: all
 
-all: allegro main
+all: main
 #	$(RM_O)
 
 main:
 	$(CC) -o ./bin/main ./src/main.c ./src/windowLogic.c $(ALLEGRO_FLAGS) -lm
 	$(RUN) -np 2 -hosts master,client1 ./bin/main
-
-allegro:
-	sudo apt-get install liballegro5-dev
