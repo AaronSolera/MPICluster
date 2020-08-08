@@ -93,11 +93,11 @@ int main(int argc, char *argv[])
 	ALLEGRO_BITMAP *sub_bitmap;
 
 	if(rank == 0){
-        sub_bitmap = al_create_sub_bitmap(image, 0, 0, *ptr_width, *ptr_height/total_ranks + 1);
+        sub_bitmap = al_create_sub_bitmap(image, 0, 0, ptr_width, ptr_height/total_ranks + 1);
     }else if(rank == total_ranks){
-        sub_bitmap = al_create_sub_bitmap(image, 0, (*ptr_height/total_ranks) * rank - 1, *ptr_width, *ptr_height/total_ranks + 1);
+        sub_bitmap = al_create_sub_bitmap(image, 0, (ptr_height/total_ranks) * rank - 1, ptr_width, ptr_height/total_ranks + 1);
     }else{
-        sub_bitmap = al_create_sub_bitmap(image, 0, (*ptr_height/total_ranks) * rank - 1, *ptr_width, *ptr_height/total_ranks + 2);
+        sub_bitmap = al_create_sub_bitmap(image, 0, (ptr_height/total_ranks) * rank - 1, ptr_width, ptr_height/total_ranks + 2);
     }
 
 	medianFilter(sub_bitmap);
