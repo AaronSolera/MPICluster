@@ -18,18 +18,22 @@
 const float FPS = 60;
 
 //define bitmaps
-ALLEGRO_BITMAP * ImageCastle = NULL;
-ALLEGRO_BITMAP * buffer = NULL;
+ALLEGRO_BITMAP *image;
 
 int main(int argc, char *argv[])
 {
-	int mouse_timer     = 0;
+	int rank, size, name_len, ptr_width, ptr_height, total_ranks = 2;
+	char processor_name[MPI_MAX_PROCESSOR_NAME];
+
+    MPI_Init(&argc, &argv);
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    MPI_Comm_size(MPI_COMM_WORLD, &size);
+    MPI_Get_processor_name(processor_name, &name_len);
 
 	ALLEGRO_DISPLAY *display = NULL;
 	ALLEGRO_EVENT_QUEUE *event_queue = NULL;
 	ALLEGRO_TIMER *timer = NULL;
 	ALLEGRO_MOUSE_STATE state;
-
 
 	bool running = true;
 	bool redraw = true;
@@ -39,6 +43,7 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "Failed to initialize allegro.\n");
 		return 1;
 	}
+
 	//init the mouse driver
 	al_install_mouse();
 
@@ -46,12 +51,8 @@ int main(int argc, char *argv[])
 	al_init_image_addon();
 	al_init_primitives_addon();
 
-	//Read path()
-	//al_install_keyboard();
-
 	//Read the bitmap from the image .png
-	ImageCastle    = al_load_bitmap(imgCastle);
-	
+	imagen = al_load_bitmap(imgCastle);
 
 	// Initialize the timer
 	timer = al_create_timer(1.0 / FPS);
@@ -86,7 +87,19 @@ int main(int argc, char *argv[])
 	// Start the timer
 	al_start_timer(timer);
 
-	float x = 0;
+	ptr_height = al_get_bitmap_height(image);
+    ptr_width  = al_get_bitmap_width(image);
+
+	if(rank == 0){
+        BALLEGRO_BITMAP *sub_bitmap = create_sub_bitmap(image, 0, 0, ptr_width, ptr_height/total_ranks + 1);
+    }else if(rank == total_ranks){
+        BALLEGRO_BITMAP *sub_bitmap = create_sub_bitmap(image, 0, (ptr_height/total_ranks) * rank - 1, ptr_width, ptr_height/total_ranks + 1);
+    }else{
+        BALLEGRO_BITMAP *sub_bitmap = create_sub_bitmap(image, 0, (ptr_height/total_ranks) * rank - 1, ptr_width, ptr_height/total_ranks + 2);
+    }
+
+	medianFilter(sub_bitmap);
+
 	// Game loop *********************************************************************************************
 	while (running) { 
 		ALLEGRO_EVENT event;
@@ -114,26 +127,13 @@ int main(int argc, char *argv[])
 			}
 		}
 
-		if(mouse_timer == 0){
-			al_get_mouse_state(&state);
-			if (state.buttons & 1) {
-				mouse_timer = 30;
-				medianFilter(ImageCastle);
-			}
-		}
-
 		// Check if we need to redraw
 		if (redraw && al_is_event_queue_empty(event_queue)) {
 			al_clear_to_color(al_map_rgb(150, 120, 170));
 
 
-			al_draw_bitmap(ImageCastle, CASTLE0_X, CASTLE0_Y, 0);
-			
-			
+			al_draw_bitmap(image, CASTLE0_X, CASTLE0_Y, 0);
 
-			if(mouse_timer != 0){
-				mouse_timer --;
-			}
 			
 			al_flip_display();
 			redraw = false;
@@ -143,9 +143,9 @@ int main(int argc, char *argv[])
 	// Clean up
 	al_destroy_display(display);
 	al_destroy_event_queue(event_queue);
-	al_destroy_bitmap(ImageCastle);
-	al_destroy_bitmap(buffer);
+	al_destroy_bitmap(image);
 	
+	MPI_Finalize();
 
 	return 0;
 }
